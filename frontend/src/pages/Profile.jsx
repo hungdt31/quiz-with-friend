@@ -7,6 +7,8 @@ import ArticleIcon from '@mui/icons-material/Article';
 import StyleIcon from '@mui/icons-material/Style';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useHeader } from '../App';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ export default function Profile() {
   const [articles, setArticles] = useState([]);
   const [flashcardSets, setFlashcardSets] = useState([]);
   const [topics, setTopics] = useState([]);
+  const { setHeaderExtra } = useHeader();
 
   // Modals state
   const [open, setOpen] = useState(false); // Bank Modal
@@ -43,6 +46,17 @@ export default function Profile() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (tab === 0) {
+      setHeaderExtra(<Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpen(true)}>Tạo ngân hàng mới</Button>);
+    } else if (tab === 1) {
+      setHeaderExtra(<Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpenArticle(true)}>Viết bài mới</Button>);
+    } else if (tab === 2) {
+      setHeaderExtra(<Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={() => setOpenFlashcard(true)}>Tạo bộ thẻ mới</Button>);
+    }
+    return () => setHeaderExtra(null);
+  }, [tab, setHeaderExtra]);
+
   const handleCreateBank = async () => {
     if (!bankName.trim()) return alert("Tên ngân hàng không được để trống!");
     try {
@@ -57,7 +71,7 @@ export default function Profile() {
   };
 
   const handleCreateArticle = async () => {
-    if(!articleFormData.title || !articleFormData.content) return alert("Nhập đủ tiêu đề và nội dung!");
+    if (!articleFormData.title || !articleFormData.content) return alert("Nhập đủ tiêu đề và nội dung!");
     await createArticle(articleFormData);
     setOpenArticle(false);
     setArticleFormData({ title: '', content: '', topic: '', is_public: true });
@@ -65,9 +79,9 @@ export default function Profile() {
   };
 
   const handleCreateFlashcard = async () => {
-    if(!flashcardFormData.title) return alert("Nhập tiêu đề bộ thẻ!");
-    if(cardsData.some(c => !c.front_text || !c.back_text)) return alert("Mặt trước và sau của thẻ không được để trống!");
-    
+    if (!flashcardFormData.title) return alert("Nhập tiêu đề bộ thẻ!");
+    if (cardsData.some(c => !c.front_text || !c.back_text)) return alert("Mặt trước và sau của thẻ không được để trống!");
+
     await createFlashcardSet({ ...flashcardFormData, cards_data: cardsData });
     setOpenFlashcard(false);
     setFlashcardFormData({ title: '', description: '', is_public: true });
@@ -86,10 +100,7 @@ export default function Profile() {
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4, mb: 8 }}>
-      <Typography variant="h4" mb={4} fontWeight="bold" color="primary">
-        Trang cá nhân của bạn
-      </Typography>
+    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 2, mb: 8 }}>
 
       <Paper elevation={3} sx={{ borderRadius: 4, overflow: 'hidden' }}>
         <Tabs value={tab} onChange={(e, v) => setTab(v)} variant="fullWidth" sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -102,9 +113,6 @@ export default function Profile() {
           <Box sx={{ p: 4 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h5" fontWeight="bold">Ngân hàng câu hỏi</Typography>
-              <Button variant="contained" onClick={() => setOpen(true)}>
-                Tạo ngân hàng mới
-              </Button>
             </Box>
 
             <List>
@@ -136,25 +144,22 @@ export default function Profile() {
           <Box sx={{ p: 4 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h5" fontWeight="bold">Bài viết của tôi ({articles.length})</Typography>
-              <Button variant="contained" onClick={() => setOpenArticle(true)}>
-                Viết bài mới
-              </Button>
             </Box>
             <List>
               {articles.map((article) => (
                 <ListItem key={article.id} divider sx={{ py: 2, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                    <ListItemText 
+                    <ListItemText
                       primary={
-                        <Typography 
-                          fontWeight="bold" 
+                        <Typography
+                          fontWeight="bold"
                           sx={{ cursor: 'pointer', '&:hover': { color: 'primary.main' } }}
                           onClick={() => navigate(`/article/${article.id}`)}
                         >
                           {article.title}
                         </Typography>
-                      } 
-                      secondary={`Chủ đề: ${article.topic_name || 'Không có'}`} 
+                      }
+                      secondary={`Chủ đề: ${article.topic_name || 'Không có'}`}
                     />
                     <FormControlLabel
                       control={<Switch checked={article.is_public} onChange={() => handleToggleArticlePrivacy(article)} color="primary" />}
@@ -173,9 +178,6 @@ export default function Profile() {
           <Box sx={{ p: 4 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h5" fontWeight="bold">Bộ Flashcard của tôi ({flashcardSets.length})</Typography>
-              <Button variant="contained" color="secondary" onClick={() => setOpenFlashcard(true)}>
-                Tạo bộ thẻ mới
-              </Button>
             </Box>
             <List>
               {flashcardSets.map((set) => (
@@ -212,14 +214,14 @@ export default function Profile() {
       <Dialog open={openArticle} onClose={() => setOpenArticle(false)} maxWidth="md" fullWidth>
         <DialogTitle fontWeight="bold" color="primary">Tạo Bài Viết Mới</DialogTitle>
         <DialogContent>
-          <TextField select fullWidth label="Chủ đề (Tùy chọn)" value={articleFormData.topic} onChange={e => setArticleFormData({...articleFormData, topic: e.target.value})} sx={{ mt: 1, mb: 2 }}>
+          <TextField select fullWidth label="Chủ đề (Tùy chọn)" value={articleFormData.topic} onChange={e => setArticleFormData({ ...articleFormData, topic: e.target.value })} sx={{ mt: 1, mb: 2 }}>
             <MenuItem value="">-- Không chọn --</MenuItem>
             {topics.map(t => <MenuItem key={t.id} value={t.id}>{t.name}</MenuItem>)}
           </TextField>
-          <TextField autoFocus margin="dense" label="Tiêu đề bài viết" fullWidth required value={articleFormData.title} onChange={e => setArticleFormData({...articleFormData, title: e.target.value})} sx={{ mb: 2 }} />
-          <TextField margin="dense" label="Nội dung" fullWidth required multiline rows={8} value={articleFormData.content} onChange={e => setArticleFormData({...articleFormData, content: e.target.value})} />
-          <FormControlLabel 
-            control={<Switch checked={articleFormData.is_public} onChange={e => setArticleFormData({...articleFormData, is_public: e.target.checked})} color="primary" />}
+          <TextField autoFocus margin="dense" label="Tiêu đề bài viết" fullWidth required value={articleFormData.title} onChange={e => setArticleFormData({ ...articleFormData, title: e.target.value })} sx={{ mb: 2 }} />
+          <TextField margin="dense" label="Nội dung" fullWidth required multiline rows={8} value={articleFormData.content} onChange={e => setArticleFormData({ ...articleFormData, content: e.target.value })} />
+          <FormControlLabel
+            control={<Switch checked={articleFormData.is_public} onChange={e => setArticleFormData({ ...articleFormData, is_public: e.target.checked })} color="primary" />}
             label="Công khai bài viết (Ai cũng có thể xem)"
             sx={{ mt: 2 }}
           />
@@ -233,22 +235,22 @@ export default function Profile() {
       <Dialog open={openFlashcard} onClose={() => setOpenFlashcard(false)} maxWidth="md" fullWidth>
         <DialogTitle fontWeight="bold" color="secondary">Tạo Bộ Flashcard</DialogTitle>
         <DialogContent>
-          <TextField autoFocus margin="dense" label="Tên bộ thẻ" fullWidth required value={flashcardFormData.title} onChange={e => setFlashcardFormData({...flashcardFormData, title: e.target.value})} sx={{ mt: 1, mb: 2 }} />
-          <TextField margin="dense" label="Mô tả" fullWidth value={flashcardFormData.description} onChange={e => setFlashcardFormData({...flashcardFormData, description: e.target.value})} sx={{ mb: 4 }} />
-          
+          <TextField autoFocus margin="dense" label="Tên bộ thẻ" fullWidth required value={flashcardFormData.title} onChange={e => setFlashcardFormData({ ...flashcardFormData, title: e.target.value })} sx={{ mt: 1, mb: 2 }} />
+          <TextField margin="dense" label="Mô tả" fullWidth value={flashcardFormData.description} onChange={e => setFlashcardFormData({ ...flashcardFormData, description: e.target.value })} sx={{ mb: 4 }} />
+
           <Typography variant="h6" sx={{ mb: 2 }}>Danh sách thẻ:</Typography>
           {cardsData.map((c, idx) => (
             <Paper key={idx} variant="outlined" sx={{ p: 2, mb: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
               <Typography fontWeight="bold">{idx + 1}.</Typography>
-              <TextField label="Mặt trước (Câu hỏi)" fullWidth required value={c.front_text} onChange={e => {const n=[...cardsData]; n[idx].front_text=e.target.value; setCardsData(n);}} />
-              <TextField label="Mặt sau (Đáp án)" fullWidth required value={c.back_text} onChange={e => {const n=[...cardsData]; n[idx].back_text=e.target.value; setCardsData(n);}} />
+              <TextField label="Mặt trước (Câu hỏi)" fullWidth required value={c.front_text} onChange={e => { const n = [...cardsData]; n[idx].front_text = e.target.value; setCardsData(n); }} />
+              <TextField label="Mặt sau (Đáp án)" fullWidth required value={c.back_text} onChange={e => { const n = [...cardsData]; n[idx].back_text = e.target.value; setCardsData(n); }} />
               <IconButton color="error" onClick={() => setCardsData(cardsData.filter((_, i) => i !== idx))}><DeleteIcon /></IconButton>
             </Paper>
           ))}
-          <Button startIcon={<AddCircleIcon />} onClick={() => setCardsData([...cardsData, {front_text:'', back_text:''}])} sx={{ mb: 2 }}>Thêm thẻ</Button>
+          <Button startIcon={<AddCircleIcon />} onClick={() => setCardsData([...cardsData, { front_text: '', back_text: '' }])} sx={{ mb: 2 }}>Thêm thẻ</Button>
           <Box>
-            <FormControlLabel 
-              control={<Switch checked={flashcardFormData.is_public} onChange={e => setFlashcardFormData({...flashcardFormData, is_public: e.target.checked})} color="secondary" />}
+            <FormControlLabel
+              control={<Switch checked={flashcardFormData.is_public} onChange={e => setFlashcardFormData({ ...flashcardFormData, is_public: e.target.checked })} color="secondary" />}
               label="Công khai bộ thẻ này cho mọi người cùng học"
             />
           </Box>

@@ -6,11 +6,13 @@ import SaveIcon from '@mui/icons-material/Save';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import { useHeader } from '../App';
 
 export default function CreateQuiz() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [banks, setBanks] = useState([]);
+  const { setHeaderExtra } = useHeader();
   
   const [formData, setFormData] = useState({
     title: '',
@@ -38,6 +40,15 @@ export default function CreateQuiz() {
     getCategories().then(res => setCategories(res.data ? res.data : res)).catch(() => {});
     getBanks().then(res => setBanks(res.data ? res.data : res)).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    setHeaderExtra(
+      <Button variant="contained" color="primary" startIcon={<SaveIcon />} onClick={() => document.getElementById('submit-quiz-btn').click()}>
+        Lưu Đề Thi
+      </Button>
+    );
+    return () => setHeaderExtra(null);
+  }, [setHeaderExtra]);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -112,27 +123,25 @@ export default function CreateQuiz() {
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4, mb: 8 }}>
-      <Typography variant="h4" fontWeight="bold" mb={4} align="center" color="primary">
-        Tạo Đề Thi Mới
-      </Typography>
+    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 2, mb: 8 }}>
       <form onSubmit={handleSubmit}>
+        <button id="submit-quiz-btn" type="submit" style={{ display: 'none' }} />
         {/* Thông tin chung */}
         <Paper elevation={3} sx={{ p: 4, borderRadius: 4, mb: 4 }}>
           <Typography variant="h6" fontWeight="bold" mb={3}>1. Thông tin chung</Typography>
           <Grid container spacing={3}>
-            <Grid xs={12}>
+            <Grid item xs={12}>
               <TextField fullWidth required label="Tên Đề Thi" name="title" value={formData.title} onChange={handleChange} />
             </Grid>
-            <Grid xs={12}>
+            <Grid item xs={12}>
               <TextField select fullWidth required label="Danh mục" name="category" value={formData.category} onChange={handleChange}>
                 {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
               </TextField>
             </Grid>
-            <Grid xs={12} sm={6}>
+            <Grid item xs={12} sm={6}>
               <TextField fullWidth required type="number" label="Thời gian làm bài (phút)" name="time_limit" value={formData.time_limit} onChange={handleChange} />
             </Grid>
-            <Grid xs={12} sm={6}>
+            <Grid item xs={12} sm={6}>
               <TextField fullWidth required type="number" label="Điểm đỗ (%)" name="passing_score" value={formData.passing_score} onChange={handleChange} />
             </Grid>
           </Grid>
@@ -170,10 +179,10 @@ export default function CreateQuiz() {
             </Box>
             
             <Grid container spacing={2} mb={2}>
-              <Grid xs={12} sm={8}>
+              <Grid item xs={12} sm={8}>
                 <TextField fullWidth required label="Nội dung câu hỏi" value={q.text} onChange={(e) => updateQuestion(qIndex, 'text', e.target.value)} />
               </Grid>
-              <Grid xs={12} sm={4}>
+              <Grid item xs={12} sm={4}>
                 <TextField select fullWidth label="Lưu vào ngân hàng (Tuỳ chọn)" value={q.bank_id} onChange={(e) => updateQuestion(qIndex, 'bank_id', e.target.value)}>
                   <MenuItem value="">-- Không lưu --</MenuItem>
                   {banks.map(b => <MenuItem key={b.id} value={b.id}>{b.name}</MenuItem>)}
@@ -197,10 +206,6 @@ export default function CreateQuiz() {
 
         <Button variant="outlined" fullWidth startIcon={<AddCircleIcon />} onClick={addQuestion} sx={{ mb: 4, py: 1.5, borderStyle: 'dashed' }}>
           Tạo thêm câu hỏi mới
-        </Button>
-
-        <Button type="submit" variant="contained" color="primary" fullWidth size="large" startIcon={<SaveIcon />} sx={{ py: 2, fontSize: '1.2rem', borderRadius: 2 }}>
-          LƯU TOÀN BỘ ĐỀ THI
         </Button>
       </form>
 

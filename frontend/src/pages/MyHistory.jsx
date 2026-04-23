@@ -5,10 +5,13 @@ import { Box, Typography, Paper, List, ListItem, ListItemAvatar, Avatar, ListIte
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import { useHeader } from '../App';
+import ExploreIcon from '@mui/icons-material/Explore';
 
 export default function MyHistory() {
   const [attempts, setAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { setHeaderExtra } = useHeader();
 
   useEffect(() => {
     getMyAttempts().then(data => {
@@ -17,13 +20,19 @@ export default function MyHistory() {
     }).catch(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    setHeaderExtra(
+      <Button component={RouterLink} to="/" variant="contained" startIcon={<ExploreIcon />}>
+        Làm bài thi mới
+      </Button>
+    );
+    return () => setHeaderExtra(null);
+  }, [setHeaderExtra]);
+
   if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}><CircularProgress /></Box>;
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-      <Typography variant="h3" fontWeight="bold" mb={4}>
-        Lịch sử làm bài
-      </Typography>
+    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 2, mb: 8 }}>
       
       {attempts.length === 0 ? (
         <Paper elevation={2} sx={{ p: 6, textAlign: 'center', borderRadius: 4 }}>

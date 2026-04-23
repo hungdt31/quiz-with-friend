@@ -6,10 +6,13 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import PersonIcon from '@mui/icons-material/Person';
+import AddIcon from '@mui/icons-material/Add';
+import { useHeader } from '../App';
 
 export default function QuizList() {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { setHeaderExtra } = useHeader();
 
   useEffect(() => {
     getQuizzes().then(res => {
@@ -18,14 +21,17 @@ export default function QuizList() {
     }).catch(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    setHeaderExtra(
+      <Button variant="contained" component={RouterLink} to="/create-quiz" startIcon={<AddIcon />}>
+        Tạo Đề Mới
+      </Button>
+    );
+    return () => setHeaderExtra(null);
+  }, [setHeaderExtra]);
+
   return (
-    <Box>
-      <Typography variant="h3" fontWeight="bold" gutterBottom sx={{ background: 'linear-gradient(to right, #60a5fa, #a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-        Khám phá Đề thi
-      </Typography>
-      <Typography variant="subtitle1" color="text.secondary" mb={4}>
-        Lựa chọn các bài kiểm tra được thiết kế để thử thách trí tuệ của bạn.
-      </Typography>
+    <Box sx={{ maxWidth: 1200, mx: 'auto', px: 4, py: 4 }}>
 
       <Grid container spacing={3}>
         {loading ? (

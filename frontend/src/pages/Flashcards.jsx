@@ -4,10 +4,12 @@ import { Box, Typography, Paper, Grid, Card, CardContent, Button, Dialog, Dialog
 import AddIcon from '@mui/icons-material/Add';
 import StyleIcon from '@mui/icons-material/Style';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useHeader } from '../App';
 
 export default function Flashcards() {
   const [sets, setSets] = useState([]);
   const [open, setOpen] = useState(false);
+  const { setHeaderExtra } = useHeader();
   const [studySet, setStudySet] = useState(null);
   const [currentCardIdx, setCurrentCardIdx] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -17,6 +19,23 @@ export default function Flashcards() {
 
   const fetchSets = async () => setSets(await getFlashcardSets());
   useEffect(() => { fetchSets(); }, []);
+
+  useEffect(() => {
+    if (!studySet) {
+      setHeaderExtra(
+        <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={() => setOpen(true)}>
+          Tạo Bộ Thẻ Mới
+        </Button>
+      );
+    } else {
+      setHeaderExtra(
+        <Button variant="outlined" color="secondary" onClick={() => setStudySet(null)}>
+          Thoát chế độ học
+        </Button>
+      );
+    }
+    return () => setHeaderExtra(null);
+  }, [setHeaderExtra, studySet]);
 
   const handleAddCard = () => setCardsData([...cardsData, { front_text: '', back_text: '' }]);
   const handleRemoveCard = (idx) => setCardsData(cardsData.filter((_, i) => i !== idx));
@@ -47,7 +66,6 @@ export default function Flashcards() {
     const currentCard = studySet.cards[currentCardIdx];
     return (
       <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4, textAlign: 'center' }}>
-        <Button onClick={() => setStudySet(null)} sx={{ mb: 4 }}>Thoát chế độ học</Button>
         <Typography variant="h5" fontWeight="bold" mb={2}>{studySet.title}</Typography>
         <Typography mb={4}>{currentCardIdx + 1} / {studySet.cards.length}</Typography>
 
@@ -82,11 +100,7 @@ export default function Flashcards() {
   }
 
   return (
-    <Box sx={{ maxWidth: 1000, mx: 'auto', mt: 4, mb: 8 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" color="secondary">Kho Flashcards</Typography>
-        <Button variant="contained" color="secondary" startIcon={<AddIcon />} onClick={() => setOpen(true)}>Tạo Bộ Thẻ Mới</Button>
-      </Box>
+    <Box sx={{ maxWidth: 1000, mx: 'auto', mt: 2, mb: 8 }}>
 
       <Grid container spacing={4}>
         {sets.map(set => (

@@ -6,12 +6,14 @@ import PersonIcon from '@mui/icons-material/Person';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
+import { useHeader } from '../App';
 
 export default function Articles() {
   const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [topics, setTopics] = useState([]);
   const [open, setOpen] = useState(false);
+  const { setHeaderExtra } = useHeader();
 
   const [formData, setFormData] = useState({ title: '', content: '', topic: '', is_public: true });
 
@@ -24,6 +26,15 @@ export default function Articles() {
 
   useEffect(() => { fetchData(); }, []);
 
+  useEffect(() => {
+    setHeaderExtra(
+      <Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpen(true)}>
+        Đăng Bài Mới
+      </Button>
+    );
+    return () => setHeaderExtra(null);
+  }, [setHeaderExtra]);
+
   const handleCreate = async () => {
     if (!formData.title || !formData.content) return alert("Nhập đủ tiêu đề và nội dung!");
     await createArticle(formData);
@@ -33,11 +44,7 @@ export default function Articles() {
   };
 
   return (
-    <Box sx={{ maxWidth: 1000, mx: 'auto', mt: 4, mb: 8 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" fontWeight="bold" color="primary">Diễn Đàn Học Tập</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpen(true)}>Đăng Bài Mới</Button>
-      </Box>
+    <Box sx={{ maxWidth: 1000, mx: 'auto', mt: 2, mb: 8 }}>
 
       <Grid container spacing={4}>
         {articles.map(article => (

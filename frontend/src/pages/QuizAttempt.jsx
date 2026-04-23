@@ -32,9 +32,9 @@ export default function QuizAttempt() {
       navigate('/login');
       return;
     }
-    
+
     if (Object.keys(answers).length < quiz.questions.length) {
-      if(!window.confirm("Bạn chưa làm hết các câu hỏi. Vẫn muốn nộp bài?")) return;
+      if (!window.confirm("Bạn chưa làm hết các câu hỏi. Vẫn muốn nộp bài?")) return;
     }
 
     setSubmitting(true);
@@ -53,7 +53,7 @@ export default function QuizAttempt() {
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto' }}>
-      <Paper elevation={3} sx={{ p: 4, mb: 4, borderRadius: 4, textAlign: 'center', background: 'linear-gradient(145deg, #1e293b, #0f172a)' }}>
+      <Paper elevation={3} sx={{ p: 4, mb: 4, borderRadius: 4, textAlign: 'center' }}>
         <Typography variant="h3" fontWeight="bold" gutterBottom>{quiz.title}</Typography>
         <Typography variant="subtitle1" color="text.secondary">
           Thời gian: {quiz.time_limit} phút | Điểm đỗ: {quiz.passing_score}%
@@ -62,19 +62,19 @@ export default function QuizAttempt() {
 
       {quiz.questions?.map((q, index) => (
         <Paper elevation={2} key={q.id} sx={{ p: 3, mb: 3, borderRadius: 3 }}>
-          <Typography variant="h6" fontWeight="bold" mb={2}>
+          <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
             Câu {index + 1}: {q.text}
           </Typography>
-          <FormControl component="fieldset" fullWidth>
+          <FormControl component="fieldset" fullWidth sx={{ ml: 1 }}>
             <RadioGroup value={answers[q.id] || ''} onChange={(e) => handleSelect(q.id, Number(e.target.value))}>
               {q.answers?.map(a => (
-                <FormControlLabel 
-                  key={a.id} 
-                  value={a.id} 
-                  control={<Radio />} 
-                  label={a.text} 
-                  sx={{ 
-                    mb: 1, p: 1, borderRadius: 2, 
+                <FormControlLabel
+                  key={a.id}
+                  value={a.id}
+                  control={<Radio />}
+                  label={a.text}
+                  sx={{
+                    mb: 1, p: 1, borderRadius: 2,
                     border: '1px solid',
                     borderColor: answers[q.id] === a.id ? 'primary.main' : 'divider',
                     bgcolor: answers[q.id] === a.id ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
@@ -87,12 +87,12 @@ export default function QuizAttempt() {
         </Paper>
       ))}
 
-      <Box textAlign="center" mt={6} mb={4}>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          size="large" 
-          onClick={handleSubmit} 
+      <Box sx={{ textAlign: "center", mt: 6, mb: 4 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleSubmit}
           disabled={submitting}
           startIcon={submitting ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
           sx={{ px: 6, py: 1.5, borderRadius: 8, fontSize: '1.1rem' }}

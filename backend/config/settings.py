@@ -148,7 +148,7 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'HQuiz API',
+    'TITLE': 'FlashQuiz API',
     'DESCRIPTION': 'Tài liệu tham khảo API tự động cho Hệ thống Quiz App',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,

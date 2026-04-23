@@ -1,8 +1,8 @@
-# 🚀 HQuiz - Hệ Sinh Thái Học Tập Thông Minh
+# 🚀 FlashQuiz - Hệ Sinh Thái Học Tập Thông Minh
 
-HQuiz là một nền tảng học tập trực tuyến toàn diện (LMS) được xây dựng để giúp người dùng tạo, quản lý và chia sẻ các tài nguyên giáo dục một cách hiệu quả và trực quan.
+FlashQuiz là một nền tảng học tập trực tuyến toàn diện (LMS) được xây dựng để giúp người dùng tạo, quản lý và chia sẻ các tài nguyên giáo dục một cách hiệu quả và trực quan.
 
-![HQuiz Banner](https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge)
+![FlashQuiz Banner](https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge)
 ![Tech Stack](https://img.shields.io/badge/Django-REST_Framework-green?style=for-the-badge&logo=django)
 ![Frontend](https://img.shields.io/badge/React-MUI-blue?style=for-the-badge&logo=react)
 
@@ -83,4 +83,4 @@ Mọi ý tưởng đóng góp hoặc báo lỗi vui lòng mở một **Issue** h
 
 ---
 
-**Phát triển bởi Đội ngũ HQuiz 🚀**
+**Phát triển bởi Đội ngũ FlashQuiz 🚀**
