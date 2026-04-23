@@ -1,0 +1,1 @@
+$env:DJANGO_SUPERUSER_PASSWORD="admin"; .\venv\Scripts\python manage.py createsuperuser --noinput --username root --email root@example.com
